@@ -2,7 +2,5 @@
 using namespace System::Drawing;
 
 void drawBoard(Graphics^ g);
-
-//Graphics object for drawing
-
-
+void initBoard();
+void addNew();

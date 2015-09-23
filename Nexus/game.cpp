@@ -1,4 +1,7 @@
 #include "StdAfx.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "game.h"
 #using <system.drawing.dll>
 
@@ -51,20 +54,44 @@ void initBoard()
 	}
 }
 
+//Chooses three random positions on board and randomises picture ofr those positions
+void addNew()
+{
+	//Ints for colour, X, Y
+	int randomColour;
+	int X;
+	int Y;
+
+	//Generate Random Seed
+	srand(time(NULL));
+
+	//Randomise three times
+	for (int i = 0; i < 3; i++)
+	{
+		//Randomise Colour (Choose between 1 and 6)
+		randomColour = rand() % 6 + 1;
+
+		//Randomise Space, Check if free
+		do
+		{
+			X = rand() % 9;
+			Y = rand() % 9;
+		} while (gameBoard[X][Y] != FREE);
+		
+		//Update Gameboard
+		gameBoard[X][Y] = randomColour;
+	}
+}
+
 //Draws Board inside a picturebox
 void drawBoard(Graphics^ g)
 {
-	Pen^ pen = gcnew Pen(Color::Black);
-	pen->Width = 1;
 	for (int x = 0; x < BOARDWIDTH; x++)
 	{
 		for (int y = 0; y < BOARDHEIGHT; y++)
 		{
 			//Create Rectangle object
 			Rectangle bounds(x * RECTSIZE, y * RECTSIZE, RECTSIZE, RECTSIZE);
-
-			//Draw Rectangle to bound the image
-			g->DrawRectangle(pen, x * RECTSIZE, y * RECTSIZE, RECTSIZE, RECTSIZE);
 
 			//Decide what image to draw
 			switch (gameBoard[x][y])

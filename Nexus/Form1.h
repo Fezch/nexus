@@ -1,7 +1,6 @@
 #pragma once
 #include "game.h"
 
-
 namespace Nexus {
 
 	using namespace System;
@@ -26,6 +25,7 @@ namespace Nexus {
 		Form1(void)
 		{
 			InitializeComponent();
+			initBoard();
 			//
 			//TODO: Add the constructor code here
 			//
@@ -43,7 +43,10 @@ namespace Nexus {
 			}
 		}
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
-	private: System::Windows::Forms::Button^  button1;
+	private: System::Windows::Forms::Button^  restart;
+	private: System::Windows::Forms::Button^  next;
+
+
 	protected:
 
 	private:
@@ -60,35 +63,47 @@ namespace Nexus {
 		void InitializeComponent(void)
 		{
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
-			this->button1 = (gcnew System::Windows::Forms::Button());
+			this->restart = (gcnew System::Windows::Forms::Button());
+			this->next = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// pictureBox1
 			// 
-			this->pictureBox1->Location = System::Drawing::Point(29, 33);
+			this->pictureBox1->Location = System::Drawing::Point(12, 12);
 			this->pictureBox1->Name = L"pictureBox1";
 			this->pictureBox1->Size = System::Drawing::Size(451, 451);
 			this->pictureBox1->TabIndex = 0;
 			this->pictureBox1->TabStop = false;
 			this->pictureBox1->Click += gcnew System::EventHandler(this, &Form1::pictureBox1_Click);
 			// 
-			// button1
+			// restart
 			// 
-			this->button1->Location = System::Drawing::Point(653, 60);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(75, 23);
-			this->button1->TabIndex = 1;
-			this->button1->Text = L"button1";
-			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &Form1::button1_Click);
+			this->restart->Location = System::Drawing::Point(469, 12);
+			this->restart->Name = L"restart";
+			this->restart->Size = System::Drawing::Size(75, 23);
+			this->restart->TabIndex = 1;
+			this->restart->Text = L"Restart";
+			this->restart->UseVisualStyleBackColor = true;
+			this->restart->Click += gcnew System::EventHandler(this, &Form1::restart_Click);
+			// 
+			// next
+			// 
+			this->next->Location = System::Drawing::Point(469, 41);
+			this->next->Name = L"next";
+			this->next->Size = System::Drawing::Size(75, 23);
+			this->next->TabIndex = 2;
+			this->next->Text = L"Next";
+			this->next->UseVisualStyleBackColor = true;
+			this->next->Click += gcnew System::EventHandler(this, &Form1::next_Click);
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(784, 762);
-			this->Controls->Add(this->button1);
+			this->ClientSize = System::Drawing::Size(551, 476);
+			this->Controls->Add(this->next);
+			this->Controls->Add(this->restart);
 			this->Controls->Add(this->pictureBox1);
 			this->Name = L"Form1";
 			this->Text = L"Nexus 2015";
@@ -97,11 +112,22 @@ namespace Nexus {
 
 		}
 #pragma endregion
-	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void restart_Click(System::Object^  sender, System::EventArgs^  e) {
+				 //Reset Board
+				 initBoard();
+
+				 //Draw Board
 				 drawBoard(pictureBox1->CreateGraphics());
 	}
 	private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {
 
+	}
+	private: System::Void next_Click(System::Object^  sender, System::EventArgs^  e) {
+				 //Randomise New Balls
+				 addNew();
+
+				 //Draw Board
+				 drawBoard(pictureBox1->CreateGraphics());
 	}
 	};
 }
