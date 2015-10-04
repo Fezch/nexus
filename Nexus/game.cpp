@@ -1,6 +1,6 @@
 #include "StdAfx.h"
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 #include "game.h"
 #using <system.drawing.dll>
@@ -8,23 +8,7 @@
 using namespace System;
 using namespace System::Drawing;
 
-//Constants
-const int BOARDWIDTH = 9;
-const int BOARDHEIGHT = 9;
-const int RECTSIZE = 50;
-
-//Int[] for drawing board
 int gameBoard[BOARDWIDTH][BOARDHEIGHT];
-
-//Ints for colours
-const int FREE = 0;
-const int BLUELIGHT = 1;
-const int BLUEDARK = 2;
-const int GREEN = 3;
-const int PURPLE = 4;
-const int RED = 5;
-const int YELLOW = 6;
-const int SELECTED = 7;
 
 //Images for colours
 ref class Images{

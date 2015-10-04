@@ -2,6 +2,14 @@
 #include "game.h"
 
 namespace Nexus {
+	//Variables
+	//Used for position of last clicked ball
+	int selectedX = 0;
+	int selectedY = 0;
+	int selectedColour = 0;
+
+	//Boolean for identifying if user has selected a ball
+	bool selected = false;
 
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -75,7 +83,7 @@ namespace Nexus {
 			this->pictureBox1->Size = System::Drawing::Size(451, 451);
 			this->pictureBox1->TabIndex = 0;
 			this->pictureBox1->TabStop = false;
-			this->pictureBox1->Click += gcnew System::EventHandler(this, &Form1::pictureBox1_Click);
+			this->pictureBox1->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::pictureBox1_MouseClick);
 			// 
 			// restart
 			// 
@@ -112,18 +120,82 @@ namespace Nexus {
 
 		}
 #pragma endregion
-	private: System::Void restart_Click(System::Object^  sender, System::EventArgs^  e) {
+
+		//Click on Restart Button
+	private: System::Void restart_Click(System::Object^  sender, System::EventArgs^  e)
+	{
 				 //Reset Board
 				 initBoard();
 
 				 //Draw Board
 				 drawBoard(pictureBox1->CreateGraphics());
 	}
-	private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {
 
+			 //Click on PictureBox
+	private: System::Void pictureBox1_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e)
+	{
+				 //If nothing has been selected AND the user clicked on a TAKEN space
+				 if ((selected == false) && (gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] != FREE))
+				 {
+					 //Save location of selected ball
+					 selectedX = e->X / RECTSIZE;
+					 selectedY = e->Y / RECTSIZE;
+
+					 //Save colour of selected ball
+					 selectedColour = gameBoard[selectedX][selectedY];
+
+					 //Change colour of selected ball
+					 gameBoard[selectedX][selectedY] = SELECTED;
+
+					 //Make selected true
+					 selected = true;
+				 }
+
+				 //Else if something has already been selected AND the user clicked on a TAKEN space
+				 else if ((selected == true) && (gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] != FREE))
+				 {
+					 //Revert colour of previously selected ball
+					 gameBoard[selectedX][selectedY] = selectedColour;
+
+					 //Change current selection to new selection
+					 selectedX = e->X / RECTSIZE;
+					 selectedY = e->Y / RECTSIZE;
+
+					 //Save colour of new selected ball
+					 selectedColour = gameBoard[selectedX][selectedY];
+
+					 //Change colour of new selected ball
+					 gameBoard[selectedX][selectedY] = SELECTED;
+
+					 //Make selected true
+					 selected = true;
+				 }
+
+				 //Else if something has already been selected AND the user clicked on a FREE space
+				 else if ((selected == true) && (gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] == FREE))
+				 {
+					 //Revert colour of selected ball
+					 gameBoard[selectedX][selectedY] = selectedColour;
+
+					 //Swap contents of cells
+					 gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] = gameBoard[selectedX][selectedY];
+					 gameBoard[selectedX][selectedY] = FREE;
+
+					 //Make selected false
+					 selected = false;
+				 }
+
+				 //Check if there is not a line
+				 //if (checkForLine != true)
+				 //then add more balls
+
+				 //Redraw Board
+				 drawBoard(pictureBox1->CreateGraphics());
 	}
-	private: System::Void next_Click(System::Object^  sender, System::EventArgs^  e) {
-				 //Randomise New Balls
+			 //Click on Next Button
+	private: System::Void next_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+				 //Add New Balls
 				 addNew();
 
 				 //Draw Board
