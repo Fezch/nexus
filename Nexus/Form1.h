@@ -195,11 +195,42 @@ namespace Nexus {
 			 //Click on Next Button
 	private: System::Void next_Click(System::Object^  sender, System::EventArgs^  e)
 	{
-				 //Add New Balls
-				 addNew();
+				 //Boolean for game over
+				 bool gameOver = true;
 
-				 //Draw Board
-				 drawBoard(pictureBox1->CreateGraphics());
+				 //Int for number of free spaces
+				 int freeSpaces = 0;
+
+				 //Check to see if game is finished
+				 for (int x = 0; x < BOARDWIDTH; x++)
+				 {
+					 for (int y = 0; y < BOARDHEIGHT; y++)
+					 {
+						 //If there is a free space
+						 if (gameBoard[x][y] == FREE)
+						 {
+							 //The game is not over
+							 gameOver = false;
+
+							 //Add to free space counter
+							 freeSpaces++;
+						 }
+					 }
+				 }
+
+				 //If game is not over
+				 if (gameOver == false)
+				 {
+					 //Add New Balls
+					 addNew(freeSpaces);
+
+					 //Draw Board
+					 drawBoard(pictureBox1->CreateGraphics());
+				 }
+				 else
+				 {
+					 MessageBox::Show("Game Over! No more spaces left!");
+				 }
 	}
 	};
 }

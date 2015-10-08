@@ -4,7 +4,7 @@ using namespace System::Drawing;
 //Methods
 void drawBoard(Graphics^ g);
 void initBoard();
-void addNew();
+void addNew(int freeSpaces);
 
 //Constants
 const int BOARDWIDTH = 9;

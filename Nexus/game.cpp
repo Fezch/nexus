@@ -38,8 +38,8 @@ void initBoard()
 	}
 }
 
-//Chooses three random positions on board and randomises picture ofr those positions
-void addNew()
+//Chooses three random positions on board and randomises picture of those positions
+void addNew(int freeSpaces)
 {
 	//Ints for colour, X, Y
 	int randomColour;
@@ -49,22 +49,52 @@ void addNew()
 	//Generate Random Seed
 	srand(time(NULL));
 
-	//Randomise three times
-	for (int i = 0; i < 3; i++)
+	//If there are more than 3 spaces
+	if (freeSpaces > 3)
 	{
-		//Randomise Colour (Choose between 1 and 6)
-		randomColour = rand() % 6 + 1;
-
-		//Randomise Space, Check if free
-		do
+		//Randomise three times
+		for (int i = 0; i < 3; i++)
 		{
-			X = rand() % 9;
-			Y = rand() % 9;
-		} while (gameBoard[X][Y] != FREE);
-		
-		//Update Gameboard
-		gameBoard[X][Y] = randomColour;
+			//Randomise Colour (Choose between 1 and 6)
+			randomColour = rand() % 6 + 1;
+
+			//Randomise Space, Check if free
+			do
+			{
+				X = rand() % 9;
+				Y = rand() % 9;
+			} while (gameBoard[X][Y] != FREE);
+
+			//Update Gameboard
+			gameBoard[X][Y] = randomColour;
+		}
 	}
+	//Else if there is less than three free spaces
+	else
+	{
+		//Randomise for the number of free spaces
+		for (int i = 0; i < freeSpaces; i++)
+		{
+			//Randomise Colour (Choose between 1 and 6)
+			randomColour = rand() % 6 + 1;
+
+			//Randomise Space, Check if free
+			do
+			{
+				X = rand() % 9;
+				Y = rand() % 9;
+			} while (gameBoard[X][Y] != FREE);
+
+			//Update Gameboard
+			gameBoard[X][Y] = randomColour;
+		}
+	}
+}
+
+//Checks for lines
+void checkForLine()
+{
+
 }
 
 //Draws Board inside a picturebox
