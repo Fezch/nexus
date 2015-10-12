@@ -5,6 +5,8 @@ using namespace System::Drawing;
 void drawBoard(Graphics^ g);
 void initBoard();
 void addNew(int freeSpaces);
+bool checkForLine();
+void deleteLine(int count, int initX, int initY, bool isHorizontal);
 
 //Constants
 const int BOARDWIDTH = 9;

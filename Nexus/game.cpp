@@ -92,9 +92,94 @@ void addNew(int freeSpaces)
 }
 
 //Checks for lines
-void checkForLine()
+bool checkForLine()
 {
+	//Bool for returning
+	bool lineFound = false;
 
+	//Int for colour
+	int colour = 0;
+
+	//int for counting
+	int count = 0;
+
+	//Check for Horizontal
+	for (int y = 0; y < BOARDHEIGHT; y++)
+	{
+		for (int x = 0; x < 5; x++)
+		{
+			//Save colour
+			colour = gameBoard[x][y];
+
+			//Check for a line of five of colours that are not free
+			if ((gameBoard[x][y] == colour && gameBoard[x + 1][y] == colour && gameBoard[x + 2][y] == colour && gameBoard[x + 3][y] == colour && gameBoard[x + 4][y] == colour) && (colour != FREE))
+			{
+				//A line has been found
+				lineFound = true;
+
+				//See if there are more colours in the line
+				count = 5;
+				while (gameBoard[x + count][y] == colour)
+				{
+					count++;
+				}
+
+				//Delete line
+				deleteLine(count, x, y, true);
+			}
+		}
+	}
+
+	//Check for Vertical
+	for (int x = 0; x < BOARDHEIGHT; x++)
+	{
+		for (int y = 0; y < 5; y++)
+		{
+			//Save colour
+			colour = gameBoard[x][y];
+
+			//Check for a line of five of colours that are not free
+			if ((gameBoard[x][y] == colour && gameBoard[x][y + 1] == colour && gameBoard[x][y + 2] == colour && gameBoard[x][y + 3] == colour && gameBoard[x][y + 4] == colour) && (colour != FREE))
+			{
+				//A line has been found
+				lineFound = true;
+
+				//See if there are more (use count)
+				count = 5;
+				while (gameBoard[x][y + count] == colour)
+				{
+					count++;
+				}
+
+				//Delete line
+				deleteLine(count, x, y, false);
+			}
+		}
+	}
+
+	//State wether a line was found
+	return lineFound;
+}
+
+//Deletes a line of specified length
+void deleteLine(int count, int initX, int initY, bool isHorizontal)
+{
+	//If horizontal
+	if (isHorizontal)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			gameBoard[initX + i][initY] = FREE;
+		}
+	}
+	//Else vertical
+	else
+	{
+		for (int i = 0; i < count; i++)
+		{
+			gameBoard[initX][initY + i] = FREE;
+		}
+	}
 }
 
 //Draws Board inside a picturebox

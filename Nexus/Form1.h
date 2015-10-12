@@ -183,11 +183,30 @@ namespace Nexus {
 
 					 //Make selected false
 					 selected = false;
-				 }
 
-				 //Check if there is not a line
-				 //if (checkForLine != true)
-				 //then add more balls
+					 //Check if there is not a line
+					 if (checkForLine() != true)
+					 {
+						 //Int for free space counting
+						 int freeSpaces = 0;
+
+						 //Find number of free spaces
+						 for (int x = 0; x < BOARDWIDTH; x++)
+						 {
+							 for (int y = 0; y < BOARDHEIGHT; y++)
+							 {
+								 //If there is a free space
+								 if (gameBoard[x][y] == FREE)
+								 {
+									 //Add to free space counter
+									 freeSpaces++;
+								 }
+							 }
+						 }
+						 //Add needed number of balls
+						 addNew(freeSpaces);
+					 }
+				 }
 
 				 //Redraw Board
 				 drawBoard(pictureBox1->CreateGraphics());
