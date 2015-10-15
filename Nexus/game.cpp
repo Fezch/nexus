@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "game.h"
+#include "Node.h"
 #using <system.drawing.dll>
 
 using namespace System;
@@ -26,9 +27,10 @@ public:
 //Boolean for gameOver
 bool gameOver = false;
 
-//Initialises Board
+//Initialises Board and Nodes
 void initBoard()
 {
+	//Initialising Board
 	for (int x = 0; x < BOARDWIDTH; x++)
 	{
 		for (int y = 0; y < BOARDHEIGHT; y++)
@@ -36,6 +38,9 @@ void initBoard()
 			gameBoard[x][y] = FREE;
 		}
 	}
+
+	//Initialising Nodes
+
 }
 
 //Chooses three random positions on board and randomises picture of those positions
