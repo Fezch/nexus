@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <time.h>
 #include "game.h"
-#include "Node.h"
 #using <system.drawing.dll>
 
 using namespace System;
@@ -11,7 +10,7 @@ using namespace System::Drawing;
 
 int gameBoard[BOARDWIDTH][BOARDHEIGHT];
 
-//Images for colours
+//Images class for colours
 ref class Images{
 public:
 	static Bitmap^ IMGFREE = (Bitmap^)Image::FromFile("FREE.png");
@@ -22,6 +21,42 @@ public:
 	static Bitmap^ IMGRED = (Bitmap^)Image::FromFile("RED.png");
 	static Bitmap^ IMGYELLOW = (Bitmap^)Image::FromFile("YELLOW.png");
 	static Bitmap^ IMGSELECTED = (Bitmap^)Image::FromFile("SELECTED.png");
+};
+
+//Nodes class for nodes
+class Node{
+	int nodeID, arrayX, arrayY, northID, eastID, southID, westID, parentID;
+public:
+	Node(int passedNodeID, int passedArrayX, int passedArrayY)
+	{
+		//Saving passed in variables
+		nodeID = passedNodeID;
+		parentID = passedNodeID;
+		arrayX = passedArrayX;
+		arrayY = passedArrayY;
+
+		//Working out neighboring nodes
+		//North Node
+		if ((nodeID - 9) <= 0)
+			northID = nodeID;
+		else
+			northID = nodeID - 9;
+		//East Node
+		if ((nodeID % 9) == 0)
+			eastID = nodeID;
+		else
+			eastID = nodeID + 1;
+		//South Node
+		if ((nodeID + 9) >= 82)
+			southID = nodeID;
+		else
+			southID = nodeID + 9;
+		//West Node
+		if ((nodeID % 9) == 1)
+			westID = nodeID;
+		else
+			westID = nodeID - 1;
+	}
 };
 
 //Boolean for gameOver
