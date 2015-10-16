@@ -1,13 +1,14 @@
 #include "StdAfx.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include <time.h>
+#include <queue>
 #include "game.h"
 #using <system.drawing.dll>
 
 using namespace System;
 using namespace System::Drawing;
 
+//Gameboard
 int gameBoard[BOARDWIDTH][BOARDHEIGHT];
 
 //Images class for colours
@@ -25,15 +26,34 @@ public:
 
 //Nodes class for nodes
 class Node{
-	int nodeID, arrayX, arrayY, northID, eastID, southID, westID, parentID;
 public:
-	Node(int passedNodeID, int passedArrayX, int passedArrayY)
+	//Public variables
+	int nodeID, arrayX, arrayY, northID, eastID, southID, westID;
+	bool visited, isWall;
+
+	//Default Constructor
+	Node()
+	{
+		nodeID = 0;
+		arrayX = 0;
+		arrayY = 0;
+		visited = false;
+		isWall = false;
+		northID = 0;
+		eastID = 0;
+		southID = 0;
+		westID = 0;
+	}
+
+	//Advanced Constructor
+	void initNode(int passedNodeID, int passedArrayX, int passedArrayY, bool passedIsWall)
 	{
 		//Saving passed in variables
 		nodeID = passedNodeID;
-		parentID = passedNodeID;
 		arrayX = passedArrayX;
 		arrayY = passedArrayY;
+		visited = false;
+		isWall = passedIsWall;
 
 		//Working out neighboring nodes
 		//North Node
@@ -73,9 +93,6 @@ void initBoard()
 			gameBoard[x][y] = FREE;
 		}
 	}
-
-	//Initialising Nodes
-
 }
 
 //Chooses three random positions on board and randomises picture of those positions
@@ -222,6 +239,87 @@ void deleteLine(int count, int initX, int initY, bool isHorizontal)
 	}
 }
 
+//Checks for a path and returns true if a path is found
+bool checkForPath(int startX, int startY, int destX, int destY)
+{
+	//Declare variables
+	int startNode = 0;
+	int destNode = 0;
+
+	//Create array of nodes
+	Node nodes[BOARDHEIGHT * BOARDWIDTH + 1];
+
+	//Fill nodes array
+	int tempNodeID = 1;
+	for (int x = 0; x < BOARDWIDTH; x++)
+	{
+		for (int y = 0; y < BOARDHEIGHT; y++)
+		{
+			//Check if square is a ball
+			nodes[tempNodeID].initNode(tempNodeID, x, y, gameBoard[x][y] != FREE);
+
+			//Check if node is the start node
+			if ((x == startX) && (y == startY))
+			{
+				startNode = tempNodeID;
+			}
+
+			//Check if node is the destination node
+			if ((x == destX) && (y == destY))
+			{
+				destNode = tempNodeID;
+			}
+
+			//Increment tempNodeID
+			tempNodeID++;
+		}
+	}
+
+	//Queue for pathfinding
+	std::queue<int> myQueue;
+
+	//Add beginning node to queue
+	myQueue.push(startNode);
+
+	//Set startNode to visited
+	nodes[startNode].visited = true;
+
+	//Start pathfinding
+	while (myQueue.empty() == false)
+	{
+		//Save oldest value in queue
+		int curNode = myQueue.front();
+
+		//Check if destination node has been found
+		if (curNode == destNode)
+		{
+			return true;
+		}
+		else
+		{
+			//Remove value from queue
+			myQueue.pop();
+
+			//Create array of current neighbors
+			int neighbors[4] = { nodes[curNode].northID, nodes[curNode].eastID, nodes[curNode].southID, nodes[curNode].westID };
+
+			//Loop through neighbors
+			for each (int neighbor in neighbors)
+			{
+				//Check if neighbor has not been visited and is not a wall
+				if (!nodes[neighbor].visited && !nodes[neighbor].isWall)
+				{
+					myQueue.push(neighbor);
+					nodes[neighbor].visited = true;
+				}
+			}
+		}
+	}
+
+	//If no path was found
+	return false;
+}
+
 //Draws Board inside a picturebox
 void drawBoard(Graphics^ g)
 {
@@ -270,6 +368,6 @@ void drawBoard(Graphics^ g)
 			}
 		}
 	}
-	
-	
+
+
 }

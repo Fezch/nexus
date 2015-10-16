@@ -91,7 +91,7 @@ namespace Nexus {
 			this->restart->Name = L"restart";
 			this->restart->Size = System::Drawing::Size(75, 23);
 			this->restart->TabIndex = 1;
-			this->restart->Text = L"Restart";
+			this->restart->Text = L"Start";
 			this->restart->UseVisualStyleBackColor = true;
 			this->restart->Click += gcnew System::EventHandler(this, &Form1::restart_Click);
 			// 
@@ -124,6 +124,9 @@ namespace Nexus {
 		//Click on Restart Button
 	private: System::Void restart_Click(System::Object^  sender, System::EventArgs^  e)
 	{
+				 //Change name of button
+				 this->restart->Text = "Restart";
+
 				 //Reset Board
 				 initBoard();
 
@@ -174,37 +177,41 @@ namespace Nexus {
 				 //Else if something has already been selected AND the user clicked on a FREE space
 				 else if ((selected == true) && (gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] == FREE))
 				 {
-					 //Revert colour of selected ball
-					 gameBoard[selectedX][selectedY] = selectedColour;
-
-					 //Swap contents of cells
-					 gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] = gameBoard[selectedX][selectedY];
-					 gameBoard[selectedX][selectedY] = FREE;
-
-					 //Make selected false
-					 selected = false;
-
-					 //Check if there is not a line
-					 if (checkForLine() != true)
+					 //if a path has been found
+					 if (checkForPath(selectedX, selectedY, ((e->X) / RECTSIZE), ((e->X) / RECTSIZE)))
 					 {
-						 //Int for free space counting
-						 int freeSpaces = 0;
+						 //Revert colour of selected ball
+						 gameBoard[selectedX][selectedY] = selectedColour;
 
-						 //Find number of free spaces
-						 for (int x = 0; x < BOARDWIDTH; x++)
+						 //Swap contents of cells
+						 gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] = gameBoard[selectedX][selectedY];
+						 gameBoard[selectedX][selectedY] = FREE;
+
+						 //Make selected false
+						 selected = false;
+
+						 //Check if there is not a line
+						 if (checkForLine() != true)
 						 {
-							 for (int y = 0; y < BOARDHEIGHT; y++)
+							 //Int for free space counting
+							 int freeSpaces = 0;
+
+							 //Find number of free spaces
+							 for (int x = 0; x < BOARDWIDTH; x++)
 							 {
-								 //If there is a free space
-								 if (gameBoard[x][y] == FREE)
+								 for (int y = 0; y < BOARDHEIGHT; y++)
 								 {
-									 //Add to free space counter
-									 freeSpaces++;
+									 //If there is a free space
+									 if (gameBoard[x][y] == FREE)
+									 {
+										 //Add to free space counter
+										 freeSpaces++;
+									 }
 								 }
 							 }
+							 //Add needed number of balls
+							 addNew(freeSpaces);
 						 }
-						 //Add needed number of balls
-						 addNew(freeSpaces);
 					 }
 				 }
 
@@ -251,6 +258,6 @@ namespace Nexus {
 					 MessageBox::Show("Game Over! No more spaces left!");
 				 }
 	}
-	};
+};
 }
 
