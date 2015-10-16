@@ -178,7 +178,7 @@ namespace Nexus {
 				 else if ((selected == true) && (gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] == FREE))
 				 {
 					 //if a path has been found
-					 if (checkForPath(selectedX, selectedY, ((e->X) / RECTSIZE), ((e->X) / RECTSIZE)))
+					 if (checkForPath(selectedX, selectedY, ((e->X) / RECTSIZE), ((e->Y) / RECTSIZE)))
 					 {
 						 //Revert colour of selected ball
 						 gameBoard[selectedX][selectedY] = selectedColour;

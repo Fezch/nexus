@@ -246,7 +246,7 @@ bool checkForPath(int startX, int startY, int destX, int destY)
 	int startNode = 0;
 	int destNode = 0;
 
-	//Create array of nodes
+	//Create array of nodes (1 index)
 	Node nodes[BOARDHEIGHT * BOARDWIDTH + 1];
 
 	//Fill nodes array
@@ -255,7 +255,7 @@ bool checkForPath(int startX, int startY, int destX, int destY)
 	{
 		for (int y = 0; y < BOARDHEIGHT; y++)
 		{
-			//Check if square is a ball
+			//Initialise and check if node is a ball
 			nodes[tempNodeID].initNode(tempNodeID, x, y, gameBoard[x][y] != FREE);
 
 			//Check if node is the start node
@@ -290,6 +290,9 @@ bool checkForPath(int startX, int startY, int destX, int destY)
 		//Save oldest value in queue
 		int curNode = myQueue.front();
 
+		//Remove value from queue
+		myQueue.pop();
+
 		//Check if destination node has been found
 		if (curNode == destNode)
 		{
@@ -297,9 +300,6 @@ bool checkForPath(int startX, int startY, int destX, int destY)
 		}
 		else
 		{
-			//Remove value from queue
-			myQueue.pop();
-
 			//Create array of current neighbors
 			int neighbors[4] = { nodes[curNode].northID, nodes[curNode].eastID, nodes[curNode].southID, nodes[curNode].westID };
 
