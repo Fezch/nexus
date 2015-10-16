@@ -11,6 +11,9 @@ using namespace System::Drawing;
 //Gameboard
 int gameBoard[BOARDWIDTH][BOARDHEIGHT];
 
+//Boolean for gameOver
+bool gameOver = false;
+
 //Images class for colours
 ref class Images{
 public:
@@ -28,7 +31,7 @@ public:
 class Node{
 public:
 	//Public variables
-	int nodeID, arrayX, arrayY, northID, eastID, southID, westID;
+	int nodeID, arrayX, arrayY, northID, eastID, southID, westID, parentID;
 	bool visited, isWall;
 
 	//Default Constructor
@@ -43,6 +46,7 @@ public:
 		eastID = 0;
 		southID = 0;
 		westID = 0;
+		parentID = 0;
 	}
 
 	//Advanced Constructor
@@ -79,8 +83,8 @@ public:
 	}
 };
 
-//Boolean for gameOver
-bool gameOver = false;
+//Array of nodes (1 index)
+Node nodes[BOARDHEIGHT * BOARDWIDTH + 1];
 
 //Initialises Board and Nodes
 void initBoard()
@@ -246,9 +250,6 @@ bool checkForPath(int startX, int startY, int destX, int destY)
 	int startNode = 0;
 	int destNode = 0;
 
-	//Create array of nodes (1 index)
-	Node nodes[BOARDHEIGHT * BOARDWIDTH + 1];
-
 	//Fill nodes array
 	int tempNodeID = 1;
 	for (int x = 0; x < BOARDWIDTH; x++)
@@ -284,6 +285,9 @@ bool checkForPath(int startX, int startY, int destX, int destY)
 	//Set startNode to visited
 	nodes[startNode].visited = true;
 
+	//Set startNode's parent to -1
+	nodes[startNode].parentID = -1;
+
 	//Start pathfinding
 	while (myQueue.empty() == false)
 	{
@@ -309,8 +313,14 @@ bool checkForPath(int startX, int startY, int destX, int destY)
 				//Check if neighbor has not been visited and is not a wall
 				if (!nodes[neighbor].visited && !nodes[neighbor].isWall)
 				{
+					//Add neighbor to queue
 					myQueue.push(neighbor);
+
+					//Set neighbor as visted
 					nodes[neighbor].visited = true;
+
+					//Set parent of neighbor to current node
+					nodes[neighbor].parentID = curNode;
 				}
 			}
 		}
