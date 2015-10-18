@@ -8,6 +8,7 @@ void addNew(int freeSpaces);
 bool checkForLine();
 void deleteLine(int count, int initX, int initY, bool isHorizontal);
 bool checkForPath(int currentX, int currentY, int destX, int destY);
+int getScore();
 
 //Constants
 const int BOARDWIDTH = 9;

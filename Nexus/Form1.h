@@ -53,6 +53,10 @@ namespace Nexus {
 	private: System::Windows::Forms::PictureBox^  pictureBox1;
 	private: System::Windows::Forms::Button^  restart;
 	private: System::Windows::Forms::Button^  next;
+	private: System::Windows::Forms::Label^  labelScore;
+	private: System::Windows::Forms::Label^  scoreCounter;
+
+
 
 
 	protected:
@@ -73,6 +77,8 @@ namespace Nexus {
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->restart = (gcnew System::Windows::Forms::Button());
 			this->next = (gcnew System::Windows::Forms::Button());
+			this->labelScore = (gcnew System::Windows::Forms::Label());
+			this->scoreCounter = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -89,7 +95,7 @@ namespace Nexus {
 			// 
 			this->restart->Location = System::Drawing::Point(469, 12);
 			this->restart->Name = L"restart";
-			this->restart->Size = System::Drawing::Size(75, 23);
+			this->restart->Size = System::Drawing::Size(75, 75);
 			this->restart->TabIndex = 1;
 			this->restart->Text = L"Start";
 			this->restart->UseVisualStyleBackColor = true;
@@ -97,19 +103,43 @@ namespace Nexus {
 			// 
 			// next
 			// 
-			this->next->Location = System::Drawing::Point(469, 41);
+			this->next->Location = System::Drawing::Point(469, 93);
 			this->next->Name = L"next";
-			this->next->Size = System::Drawing::Size(75, 23);
+			this->next->Size = System::Drawing::Size(75, 75);
 			this->next->TabIndex = 2;
 			this->next->Text = L"Next";
 			this->next->UseVisualStyleBackColor = true;
 			this->next->Click += gcnew System::EventHandler(this, &Form1::next_Click);
+			// 
+			// labelScore
+			// 
+			this->labelScore->AutoSize = true;
+			this->labelScore->Font = (gcnew System::Drawing::Font(L"Corbel", 20, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->labelScore->Location = System::Drawing::Point(470, 391);
+			this->labelScore->Name = L"labelScore";
+			this->labelScore->Size = System::Drawing::Size(81, 33);
+			this->labelScore->TabIndex = 3;
+			this->labelScore->Text = L"Score";
+			// 
+			// scoreCounter
+			// 
+			this->scoreCounter->AutoSize = true;
+			this->scoreCounter->Font = (gcnew System::Drawing::Font(L"Agency FB", 20.25F, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(0)));
+			this->scoreCounter->Location = System::Drawing::Point(470, 429);
+			this->scoreCounter->Name = L"scoreCounter";
+			this->scoreCounter->Size = System::Drawing::Size(75, 34);
+			this->scoreCounter->TabIndex = 4;
+			this->scoreCounter->Text = L"00000";
 			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(551, 476);
+			this->Controls->Add(this->scoreCounter);
+			this->Controls->Add(this->labelScore);
 			this->Controls->Add(this->next);
 			this->Controls->Add(this->restart);
 			this->Controls->Add(this->pictureBox1);
@@ -117,6 +147,7 @@ namespace Nexus {
 			this->Text = L"Nexus 2015";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			this->ResumeLayout(false);
+			this->PerformLayout();
 
 		}
 #pragma endregion
@@ -212,6 +243,9 @@ namespace Nexus {
 							 //Add needed number of balls
 							 addNew(freeSpaces);
 						 }
+
+						 //Else there was a line so update score
+						 this->scoreCounter->Text = getScore().ToString();
 					 }
 				 }
 

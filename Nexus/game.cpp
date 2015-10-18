@@ -14,6 +14,10 @@ int gameBoard[BOARDWIDTH][BOARDHEIGHT];
 //Boolean for gameOver
 bool gameOver = false;
 
+//Integers for scoring
+int score = 0;
+int scoreMultiplier = 20;
+
 //Images class for colours
 ref class Images{
 public:
@@ -161,8 +165,8 @@ bool checkForLine()
 	//Int for colour
 	int colour = 0;
 
-	//int for counting
-	int count = 0;
+	//Int for counting length of line
+	int lineLength = 0;
 
 	//Check for Horizontal
 	for (int y = 0; y < BOARDHEIGHT; y++)
@@ -179,14 +183,17 @@ bool checkForLine()
 				lineFound = true;
 
 				//See if there are more colours in the line
-				count = 5;
-				while (gameBoard[x + count][y] == colour)
+				lineLength = 5;
+				while (gameBoard[x + lineLength][y] == colour)
 				{
-					count++;
+					lineLength++;
 				}
 
 				//Delete line
-				deleteLine(count, x, y, true);
+				deleteLine(lineLength, x, y, true);
+
+				//Update Score
+				score = score + (lineLength * scoreMultiplier);
 			}
 		}
 	}
@@ -206,14 +213,17 @@ bool checkForLine()
 				lineFound = true;
 
 				//See if there are more (use count)
-				count = 5;
-				while (gameBoard[x][y + count] == colour)
+				lineLength = 5;
+				while (gameBoard[x][y + lineLength] == colour)
 				{
-					count++;
+					lineLength++;
 				}
 
 				//Delete line
-				deleteLine(count, x, y, false);
+				deleteLine(lineLength, x, y, false);
+
+				//Update Score
+				score = score + (lineLength * scoreMultiplier);
 			}
 		}
 	}
@@ -378,6 +388,10 @@ void drawBoard(Graphics^ g)
 			}
 		}
 	}
+}
 
-
+//Returns current score
+int getScore()
+{
+	return score;
 }
