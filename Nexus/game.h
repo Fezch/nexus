@@ -1,3 +1,12 @@
+/*
+	Program name:				Nexus 2015
+	Project file name:			Nexus.sln
+	Author:						Andrew Thomas Fletcher
+	Date:						21/10/2015
+	File Description:			This is the header file for the game. This file includes:
+									+Declaration of methods and variables.
+*/
+
 #pragma once
 using namespace System::Drawing;
 
@@ -27,3 +36,4 @@ const int PURPLE = 4;
 const int RED = 5;
 const int YELLOW = 6;
 const int SELECTED = 7;
+const int NUMBERCOLOURS = 7;

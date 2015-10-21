@@ -1,5 +1,40 @@
+/*
+	Program name:				Nexus 2015
+	Project file name:			Nexus.sln
+	Author:						Andrew Thomas Fletcher
+	Date:						21/10/2015
+	Language:					C++
+	Platform:					Microsoft Visual Studio 2013
+	Purpose:					Creates a game of Nexus
+	Description:				This program creates a Windows form and displays a game of Nexus on it. The user can
+								click Start to draw the board, then Restart if they wish to start over. The Next button
+								puts three randomly coloured balls in three random positions on the board, unless the
+								board is full. The Shuffle button randomises the contents of the board. The user can
+								click on a ball to select it, then either click on an empty position to move it, or
+								click on another ball to select a different ball. A ball will only move to the desired
+								position if a clear path is available. If the user or the game puts five or more balls
+								in a row either vertically or horizontally, the line is deleted and the user gets points
+								based upon the length of the deleted line. The game is over if there are no more spaces
+								to put more balls.
+	File Description:			This file contains everything related to the form. This includes:
+									+Drawing the Form and the controls
+									+Listeners for the buttons and Board
+									+Initialising the Board
+									+Drawing the Board
+	Known Bugs:					-If the shuffle button is pushed near the end of the game, free spaces can be accidently
+									put in. I couldn't find what was causing this, so it stays, unfortunately.
+								-Because of the above bug, and the ability to push the shuffle button as many times as
+									you want, the game can be played infinitely.
+	Additional Features:		+Shuffle Button.
+								+Breadth-first Pathfinding.
+								+Reset Button.
+								+Score.
+*/
+
 #pragma once
-#include "game.h"
+#include "game.h" //Holds all game methods and objects
+#include <time.h> //Used to seed srand
+#include <stdlib.h> //Holds srand
 
 namespace Nexus {
 	//Variables
@@ -11,6 +46,9 @@ namespace Nexus {
 	//Boolean for identifying if user has selected a ball
 	bool selected = false;
 
+	//Constant for number of times to randomise (used for shuffling board)
+	const int LOOPTIMES = 100;
+
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -18,31 +56,18 @@ namespace Nexus {
 	using namespace System::Data;
 	using namespace System::Drawing;
 
-	/// <summary>
-	/// Summary for Form1
-	///
-	/// WARNING: If you change the name of this class, you will need to change the
-	///          'Resource File Name' property for the managed resource compiler tool
-	///          associated with all .resx files this class depends on.  Otherwise,
-	///          the designers will not be able to interact properly with localized
-	///          resources associated with this form.
-	/// </summary>
 	public ref class Form1 : public System::Windows::Forms::Form
 	{
 	public:
 		Form1(void)
 		{
 			InitializeComponent();
+
+			//Initialise Board
 			initBoard();
-			//
-			//TODO: Add the constructor code here
-			//
 		}
 
 	protected:
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
 		~Form1()
 		{
 			if (components)
@@ -55,23 +80,13 @@ namespace Nexus {
 	private: System::Windows::Forms::Button^  next;
 	private: System::Windows::Forms::Label^  labelScore;
 	private: System::Windows::Forms::Label^  scoreCounter;
+	private: System::Windows::Forms::Button^  shuffle;
 
-
-
-
-	protected:
 
 	private:
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
 		System::ComponentModel::Container ^components;
 
 #pragma region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
 		void InitializeComponent(void)
 		{
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
@@ -79,6 +94,7 @@ namespace Nexus {
 			this->next = (gcnew System::Windows::Forms::Button());
 			this->labelScore = (gcnew System::Windows::Forms::Label());
 			this->scoreCounter = (gcnew System::Windows::Forms::Label());
+			this->shuffle = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
@@ -133,11 +149,22 @@ namespace Nexus {
 			this->scoreCounter->TabIndex = 4;
 			this->scoreCounter->Text = L"00000";
 			// 
+			// shuffle
+			// 
+			this->shuffle->Location = System::Drawing::Point(469, 174);
+			this->shuffle->Name = L"button1";
+			this->shuffle->Size = System::Drawing::Size(75, 75);
+			this->shuffle->TabIndex = 5;
+			this->shuffle->Text = L"Shuffle";
+			this->shuffle->UseVisualStyleBackColor = true;
+			this->shuffle->Click += gcnew System::EventHandler(this, &Form1::shuffle_Click);
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(551, 476);
+			this->Controls->Add(this->shuffle);
 			this->Controls->Add(this->scoreCounter);
 			this->Controls->Add(this->labelScore);
 			this->Controls->Add(this->next);
@@ -169,7 +196,7 @@ namespace Nexus {
 	private: System::Void pictureBox1_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e)
 	{
 				 //If nothing has been selected AND the user clicked on a TAKEN space
-				 if ((selected == false) && (gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] != FREE))
+				 if ((selected == false) && (gameBoard[e->X / RECTSIZE][e->Y / RECTSIZE] != FREE))
 				 {
 					 //Save location of selected ball
 					 selectedX = e->X / RECTSIZE;
@@ -186,7 +213,7 @@ namespace Nexus {
 				 }
 
 				 //Else if something has already been selected AND the user clicked on a TAKEN space
-				 else if ((selected == true) && (gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] != FREE))
+				 else if ((selected == true) && (gameBoard[e->X / RECTSIZE][e->Y / RECTSIZE] != FREE))
 				 {
 					 //Revert colour of previously selected ball
 					 gameBoard[selectedX][selectedY] = selectedColour;
@@ -206,16 +233,16 @@ namespace Nexus {
 				 }
 
 				 //Else if something has already been selected AND the user clicked on a FREE space
-				 else if ((selected == true) && (gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] == FREE))
+				 else if ((selected == true) && (gameBoard[e->X / RECTSIZE][e->Y / RECTSIZE] == FREE))
 				 {
 					 //if a path has been found
-					 if (checkForPath(selectedX, selectedY, ((e->X) / RECTSIZE), ((e->Y) / RECTSIZE)))
+					 if (checkForPath(selectedX, selectedY, (e->X / RECTSIZE), (e->Y / RECTSIZE)))
 					 {
 						 //Revert colour of selected ball
 						 gameBoard[selectedX][selectedY] = selectedColour;
 
 						 //Swap contents of cells
-						 gameBoard[(e->X) / RECTSIZE][(e->Y) / RECTSIZE] = gameBoard[selectedX][selectedY];
+						 gameBoard[e->X / RECTSIZE][e->Y / RECTSIZE] = gameBoard[selectedX][selectedY];
 						 gameBoard[selectedX][selectedY] = FREE;
 
 						 //Make selected false
@@ -243,7 +270,6 @@ namespace Nexus {
 							 //Add needed number of balls
 							 addNew(freeSpaces);
 						 }
-
 						 //Else there was a line so update score
 						 this->scoreCounter->Text = getScore().ToString();
 					 }
@@ -284,13 +310,45 @@ namespace Nexus {
 					 //Add New Balls
 					 addNew(freeSpaces);
 
+					 //Check for lines created by adding balls
+					 checkForLine();
+
 					 //Draw Board
 					 drawBoard(pictureBox1->CreateGraphics());
 				 }
 				 else
 				 {
-					 MessageBox::Show("Game Over! No more spaces left!");
+					 MessageBox::Show("Game Over! You got " + getScore().ToString() + " points!");
 				 }
+	}
+			 //Click on Shuffle button
+	private: System::Void shuffle_Click(System::Object^  sender, System::EventArgs^  e) {
+				 int firstIndexX;
+				 int firstIndexY;
+				 int secondIndexX;
+				 int secondIndexY;
+				 int temp;
+				 srand(time(NULL)); //Seeding srand
+
+				 //Randomise array
+				 for (int i = 0; i < LOOPTIMES; i++)
+				 {
+					 //Randomise two places to swapped
+					 firstIndexX = rand() % BOARDWIDTH;
+					 firstIndexY = rand() % BOARDHEIGHT;
+					 secondIndexX = rand() % BOARDWIDTH;
+					 secondIndexY = rand() % BOARDHEIGHT;
+
+					 //Swap index contents
+					 temp = gameBoard[firstIndexX][firstIndexY];
+					 gameBoard[firstIndexX][firstIndexY] = gameBoard[secondIndexX][secondIndexY];
+					 gameBoard[secondIndexX][secondIndexY] = temp;
+				 }
+				 //Check for any lines
+				 checkForLine();
+
+				 //Draw Board
+				 drawBoard(pictureBox1->CreateGraphics());
 	}
 };
 }

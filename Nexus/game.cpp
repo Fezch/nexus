@@ -1,3 +1,14 @@
+/*
+	Program name:				Nexus 2015
+	Project file name:			Nexus.sln
+	Author:						Andrew Thomas Fletcher
+	Date:						21/10/2015
+	File Description:			This is the cpp file for the game. This file includes:
+									+Definition of methods and variables.
+									+2D Array of ints for the GameBoard.
+									+Score controls.
+*/
+
 #include "StdAfx.h"
 #include <stdlib.h>
 #include <time.h>
@@ -53,7 +64,7 @@ public:
 		parentID = 0;
 	}
 
-	//Advanced Constructor
+	//Initialises from passed in variables
 	void initNode(int passedNodeID, int passedArrayX, int passedArrayY, bool passedIsWall)
 	{
 		//Saving passed in variables
@@ -65,22 +76,22 @@ public:
 
 		//Working out neighboring nodes
 		//North Node
-		if ((nodeID - 9) <= 0)
+		if ((nodeID - BOARDWIDTH) <= 0)
 			northID = nodeID;
 		else
-			northID = nodeID - 9;
+			northID = nodeID - BOARDWIDTH;
 		//East Node
-		if ((nodeID % 9) == 0)
+		if ((nodeID % BOARDWIDTH) == 0)
 			eastID = nodeID;
 		else
 			eastID = nodeID + 1;
 		//South Node
-		if ((nodeID + 9) >= 82)
+		if ((nodeID + BOARDWIDTH) >= BOARDWIDTH * BOARDHEIGHT)
 			southID = nodeID;
 		else
-			southID = nodeID + 9;
+			southID = nodeID + BOARDWIDTH;
 		//West Node
-		if ((nodeID % 9) == 1)
+		if ((nodeID % BOARDWIDTH) == 1)
 			westID = nodeID;
 		else
 			westID = nodeID - 1;
@@ -126,8 +137,8 @@ void addNew(int freeSpaces)
 			//Randomise Space, Check if free
 			do
 			{
-				X = rand() % 9;
-				Y = rand() % 9;
+				X = rand() % BOARDWIDTH;
+				Y = rand() % BOARDHEIGHT;
 			} while (gameBoard[X][Y] != FREE);
 
 			//Update Gameboard
@@ -140,14 +151,14 @@ void addNew(int freeSpaces)
 		//Randomise for the number of free spaces
 		for (int i = 0; i < freeSpaces; i++)
 		{
-			//Randomise Colour (Choose between 1 and 6)
+			//Randomise Colour
 			randomColour = rand() % 6 + 1;
 
 			//Randomise Space, Check if free
 			do
 			{
-				X = rand() % 9;
-				Y = rand() % 9;
+				X = rand() % BOARDWIDTH;
+				Y = rand() % BOARDHEIGHT;
 			} while (gameBoard[X][Y] != FREE);
 
 			//Update Gameboard
@@ -171,6 +182,7 @@ bool checkForLine()
 	//Check for Horizontal
 	for (int y = 0; y < BOARDHEIGHT; y++)
 	{
+		//Check for a line of at least 5
 		for (int x = 0; x < 5; x++)
 		{
 			//Save colour
@@ -201,6 +213,7 @@ bool checkForLine()
 	//Check for Vertical
 	for (int x = 0; x < BOARDHEIGHT; x++)
 	{
+		//Check for a line of at least 5
 		for (int y = 0; y < 5; y++)
 		{
 			//Save colour
